@@ -1,0 +1,44 @@
+{
+  "name": "storage",
+  "version": "1.0.0",
+  "description": "storage",
+  "main": "index.js",
+  "nyc": {
+    "include": [
+      "**/*.js"
+    ],
+    "exclude": [
+      "node_modules/**/*.js",
+      "coverage/**/*.js"
+    ]
+  },
+  "scripts": {
+    "start": "node index.js",
+    "test": "mocha ./tests",
+    "test-cov": "nyc --reporter=html --no-browser --nyc-arg=--all mocha",
+    "clean": "rm -rf coverage",
+    "airbnb": "eslint index.js lib tests"
+  },
+  "author": "Pavlenko Vitaliy",
+  "license": "MIT",
+  "dependencies": {
+    "ajv": "^6.10.0",
+    "bcrypt": "^3.0.4",
+    "bull": "^3.7.0",
+    "dotenv": "^6.2.0",
+    "jsonwebtoken": "^8.5.0",
+    "pg-promise": "^8.6.3",
+    "polka": "^0.5.2"
+  },
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "chai-as-promised": "^7.1.1",
+    "chai-jest-diff": "^1.0.2",
+    "eslint": "^4.13.1",
+    "eslint-config-airbnb-base": "^12.1.0",
+    "eslint-plugin-import": "^2.8.0",
+    "istanbul": "^1.1.0-alpha.1",
+    "mocha": "^5.2.0",
+    "nyc": "^13.3.0"
+  }
+}

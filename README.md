@@ -1,10 +1,10 @@
 # SOLID documents
 
 # Developers
-- Oleh Dubynskiy
+- Vitaliy Pavlenko
+- Oleg Dubynskiy
 - Anton Myronyuk
 - Anton Velychko
-- Vitaliy Pavlenko
 
 ##  Task
 

@@ -1,0 +1,6 @@
+*/tests
+*/node_modules
+.git
+*/.eslintrc.json
+*/coverage
+*/.nyc_output

@@ -1,0 +1,31 @@
+version: '3.2'
+
+services:
+    postgres:
+        restart: always
+        image: postgres:10
+        container_name: postgres
+        ports:
+            - 5432:5432
+        environment:
+            - POSTGRES_USER=pavel
+            - POSTGRES_PASSWORD=cravets
+            - POSTGRES_DB=storage
+            - POSTGRES_HOST=localhost
+        volumes:
+            - ./postgres:/docker-entrypoint-initdb.d:ro
+
+    # storage:
+    #     restart: always
+    #     build: ./server/.
+    #     container_name: storage
+    #     ports:
+    #         - 3000:3000
+    #     links:
+    #         - postgres
+    #     environment:
+    #         - DATABASE_URL=postgresql://pavel:cravets@postgres:5432/storage?charset=utf8
+    #         - NODE_ENV=production
+    #         - PORT=3000
+    #     depends_on:
+    #         - postgres
