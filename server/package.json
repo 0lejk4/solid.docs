@@ -17,16 +17,14 @@
     "test": "mocha ./tests",
     "test-cov": "nyc --reporter=html --no-browser --nyc-arg=--all mocha",
     "clean": "rm -rf coverage",
-    "airbnb": "eslint index.js lib tests"
+    "airbnb": "eslint index.js http fileInterfaces utils"
   },
   "author": "Pavlenko Vitaliy",
   "license": "MIT",
   "dependencies": {
     "ajv": "^6.10.0",
-    "bcrypt": "^3.0.4",
-    "bull": "^3.7.0",
     "dotenv": "^6.2.0",
-    "jsonwebtoken": "^8.5.0",
+    "multer": "^1.4.1",
     "pg-promise": "^8.6.3",
     "polka": "^0.5.2"
   },
