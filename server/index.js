@@ -19,7 +19,8 @@ if (!port) {
 
 const Http = require('./http/http');
 
-const http = new Http(port);
+const routes = require('./http/modules/routes');
+const http = new Http(port, routes);
 
 (async () => {
   await http.start();
