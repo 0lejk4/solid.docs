@@ -16,6 +16,7 @@ app.listen(port, (err) => {
         console.error(err);
         process.exit(1);
     }
+    console.log(`Running server at http://0.0.0.0:${port}`)
 });
 
 process.on('unhandledRejection', (err) => {
