@@ -1,4 +1,4 @@
-const { promises: fs, createReadStream, constants } = require('fs');
+const { promises: fs, createReadStream, createWriteStream, constants } = require('fs');
 const { join } = require('path');
 
 module.exports = {
@@ -10,5 +10,9 @@ module.exports = {
     const file = join(__dirname, '..', 'data', name); 
     await fs.access(file, constants.F_OK | constants.R_OK);
     return createReadStream(file);
+  },
+  createFileStream: (name, user = '') => {
+    const path = join(__dirname, '..', '..', 'data', user || '', name);
+    return createWriteStream(path);
   },
 };

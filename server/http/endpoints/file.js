@@ -1,5 +1,6 @@
-const upload = require('../utils/uploader');
-const { getFileStream, deleteFile } = require('../../util/file');
+// const upload = require('../utils/uploader');
+const { getFileStream, deleteFile, createFileStream } = require('../../util/file');
+const Busboy = require('busboy');
 
 module.exports = (app) => {
 
@@ -27,10 +28,19 @@ module.exports = (app) => {
 
   app.post('/files', async (req, res) => {
     try {
-      await upload(req, res);
+      const busboy = new Busboy({ headers: req.headers });
       
-      res.statusCode = 201;
-      return res.end();
+      busboy.on('file', (fieldname, file, filename, encoding, mimetype) => {
+        const stream = createFileStream(name, req.user);
+        file.pipe(stream);
+      });
+
+      busboy.on('finish', () => {
+        res.statusCode = 201;        
+        res.end();
+      });
+      
+      return req.pipe(busboy);
     } catch (err) {
       res.statusCode = 415;
       return res.end(JSON.stringify({ error: err.message }));
