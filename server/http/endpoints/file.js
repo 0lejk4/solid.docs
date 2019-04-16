@@ -37,10 +37,6 @@ module.exports = (app) => {
     } 
   });
   
-  // no modification, this should rewrite file, at least so far
-  // app.put('/files', (req, res) => {
-  // });
-  
   app.delete('/files/:fileId', async (req, res) => {
     try {
       if (!req.params.fileId) {
