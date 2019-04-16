@@ -1,18 +1,20 @@
 const polka = require('polka');
-const routes = require('./modules/routes');
 
 module.exports = class RestServer {
-  constructor(port, handler) {
+  constructor(port, routes) {
     this.port = port;
-    // this.handler = handler;
+    this.routes = routes;
     this.server = polka();
   }
   start() {
     return new Promise((res, rej) => {
-      routes(this.server);
+      this.routes(this.server);
       this.server.listen(this.port, (e) => {
         if (e) rej(e);
-        else res();
+        else {
+          console.log(`Http interface is successully running on ${this.port} port`);
+          res();
+        };
       });
     });
   }

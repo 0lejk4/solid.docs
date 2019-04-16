@@ -1,19 +1,17 @@
 const upload = require('../utils/uploader');
-const { promises: fs, createReadStream, constants } = require('fs');
-const { join } = require('path');
+const { getFileStream, deleteFile } = require('../../util/file');
 
 module.exports = (app) => {
 
-  app.get('/files', async (req, res) => {
+  app.get('/files/:fileId', async (req, res) => {
     try {
-      if (!req.query.fileId) {
+      if (!req.params.fileId) {
         res.statusCode = 400;
         return res.end(JSON.stringify({ error: 'missing required param `fileID`' }));
       }
-      const file = join(__dirname, '..', '..', 'data', req.query.fileId); 
-      await fs.access(file, constants.F_OK | constants.R_OK);
-      const stream = createReadStream(file);
       
+      const stream = await getFileStream(req.params.fileId);
+
       res.statusCode = 200;
       return stream.pipe(res);
     } catch(err) {
@@ -23,7 +21,7 @@ module.exports = (app) => {
       }
       
       res.statusCode = 400;
-      return res.end();
+      return res.end(JSON.stringify({ error: err.message }));
     }
   });
 
@@ -35,23 +33,19 @@ module.exports = (app) => {
       return res.end();
     } catch (err) {
       res.statusCode = 415;
-      return res.end();
+      return res.end(JSON.stringify({ error: err.message }));
     } 
   });
   
-  // no modification, this should rewrite file, at least so far
-  // app.put('/files', (req, res) => {
-  // });
-  
-  app.delete('/files', async (req, res) => {
+  app.delete('/files/:fileId', async (req, res) => {
     try {
-      if (!req.query.fileId) {
+      if (!req.params.fileId) {
         res.statusCode = 400;
         return res.end(JSON.stringify({ error: 'missing required param `fileID`' }));
       }
-      const file = join(__dirname, '..', '..', 'data', req.query.fileId); 
-      await fs.unlink(file);
       
+      await deleteFile(req.params.fileId);
+
       res.statusCode = 204;
       return res.end();
     } catch (err) {

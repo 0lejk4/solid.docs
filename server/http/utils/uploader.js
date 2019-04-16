@@ -27,9 +27,9 @@ module.exports = (req, res) => {
   return new Promise((resolve, reject) => {
     upload(req, res, (err) => {
       if (err) {
-        reject(err);
+        return reject(err);
       }
-      resolve();
+      return resolve();
     })
   }); 
 };
