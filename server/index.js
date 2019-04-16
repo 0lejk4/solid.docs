@@ -19,9 +19,19 @@ app.listen(port, (err) => {
     console.log(`Running server at http://0.0.0.0:${port}`)
 });
 
+const Http = require('./http/http');
+
 process.on('unhandledRejection', (err) => {
     console.err('UNHANDLED', err);
 });
+
+const routes = require('./http/modules/routes');
+const http = new Http(port, routes);
+
+(async () => {
+    await http.start();
+})();
+
 
 process.on('uncaughtException', (err) => {
     console.err('UNHANDLED', err);
