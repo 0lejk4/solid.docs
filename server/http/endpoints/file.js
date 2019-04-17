@@ -1,8 +1,9 @@
 const { getFileStream, deleteFile, createFileStream } = require('../../util/file');
+const auth = require('../util/auth');
 const Busboy = require('busboy');
 
 module.exports = (app) => {
-  app.get('/files/:fileId', async (req, res) => {
+  app.get('/files/:fileId', auth, async (req, res) => {
     try {
       if (!req.params.fileId) {
         res.statusCode = 400;
@@ -24,7 +25,7 @@ module.exports = (app) => {
     }
   });
 
-  app.post('/files', async (req, res) => {
+  app.post('/files', auth, async (req, res) => {
     try {
       const busboy = new Busboy({ headers: req.headers });
 
@@ -45,7 +46,7 @@ module.exports = (app) => {
     }
   });
 
-  app.delete('/files/:fileId', async (req, res) => {
+  app.delete('/files/:fileId', auth, async (req, res) => {
     try {
       if (!req.params.fileId) {
         res.statusCode = 400;
