@@ -29,3 +29,18 @@ services:
       - PORT=3000
     depends_on:
       - postgres
+  user-service:
+    restart: always
+    build: ./user-service/.
+    container_name: user-service
+    ports:
+      - 9000:9000
+    links:
+      - postgres
+    environment:
+      - DB_URL=jdbc:postgresql://postgres:5432/storage
+      - DB_PASSWORD=cravets
+      - DB_USER=pavel
+      - PORT=9000
+    depends_on:
+      - postgres

@@ -39,10 +39,10 @@ object UserModel extends CirceJsonSupport {
     implicit val ed: `E&D`[ErrorResponse] = circeObject
   }
 
-  case class SuccessResponse(info: String)
+  case class TokenResponse(token: String)
 
-  object SuccessResponse {
-    implicit val ed: `E&D`[SuccessResponse] = circeObject
+  object TokenResponse {
+    implicit val ed: `E&D`[TokenResponse] = circeObject
   }
 
   implicit val date: FieldTypeSchema[LocalDateTime] = FieldTypeSchema(Some("string-input"), Some("string-output"), Some("".asJson))
