@@ -6,6 +6,7 @@ import scalest.admin.AdminExtension
 import scalest.admin.slick.SlickModelAdmin
 import slick.basic.DatabaseConfig
 import slick.jdbc.PostgresProfile
+import UserModel._
 
 import scala.concurrent.ExecutionContext
 
@@ -28,5 +29,5 @@ object UserServiceApp extends HttpApp
 
   override protected def routes = admin.route ~ authRoutes
 
-  startServer("0.0.0.0", 9000, system)
+  startServer("0.0.0.0", system.settings.config.getInt("http.port"), system)
 }

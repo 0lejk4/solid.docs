@@ -1,3 +1,4 @@
+
 lazy val scalestV: String = "0.0.2-SNAPSHOT"
 
 resolvers += Resolver.sonatypeRepo("snapshots")
@@ -9,6 +10,8 @@ version := "0.0.1"
 scalaVersion := "2.12.8"
 
 scalacOptions += "-Ypartial-unification"
+
+assemblyJarName in assembly := "user-service.jar"
 
 libraryDependencies ++= Seq(
   "io.github.0lejk4" %% "scalest-core" % scalestV, // core,
