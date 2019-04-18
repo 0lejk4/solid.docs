@@ -1,4 +1,5 @@
-const { getFileStream, deleteFile, createFileStream } = require('../../util/file');
+// const { getFileStream, deleteFile, createFileStream } = require('../../util/file');
+const { createContent, createStream, getContent, getStream, upsertContent, upsertStream, deleteFile } = require('../../util/file_repository');
 const auth = require('../util/auth');
 const Busboy = require('busboy');
 
@@ -10,7 +11,8 @@ module.exports = (app) => {
         return res.end(JSON.stringify({ error: 'missing required param `fileID`' }));
       }
 
-      const stream = await getFileStream(req.params.fileId);
+      // const stream = await getFileStream(req.params.fileId);
+      const stream = await getStream(req.params.fileId, req.user);
 
       res.statusCode = 200;
       return stream.pipe(res);
@@ -26,11 +28,13 @@ module.exports = (app) => {
   });
 
   app.post('/files', auth, async (req, res) => {
+
     try {
       const busboy = new Busboy({ headers: req.headers });
 
-      busboy.on('file', (fieldname, file, filename, encoding, mimetype) => {
-        const stream = createFileStream(filename, req.user);
+      busboy.on('file', async (fieldname, file, filename, encoding, mimetype) => {
+        // const stream = createFileStream(filename, req.user);
+        const stream = await createStream(filename, req.user);
         file.pipe(stream);
       });
 
@@ -53,7 +57,7 @@ module.exports = (app) => {
         return res.end(JSON.stringify({ error: 'missing required param `fileID`' }));
       }
 
-      await deleteFile(req.params.fileId);
+      await deleteFile(req.params.fileId, req.user);
 
       res.statusCode = 204;
       return res.end();
@@ -84,6 +88,7 @@ module.exports = (app) => {
                   <br>
                   <br>
                   <!-- Form starts here -->
+                  <!-- <form action="/files" enctype="multipart/form-data" method="post"> -->
                   <form action="/files" enctype="multipart/form-data" method="post">
                       <!-- Field to choose the files to be uploaded -->
                       <label class="up_styles">
