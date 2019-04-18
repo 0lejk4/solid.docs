@@ -1,9 +1,9 @@
 package com.docs.solid
 
 import akka.http.scaladsl.server.{Directives, Route}
-import com.docs.solid.Model.{LoginRequest, RegisterRequest}
+import com.docs.solid.UserModel._
 
-trait AuthServiceApi extends Directives { self: AuthServiceComponent =>
+trait UserServiceApi extends Directives { self: UserServiceComponent =>
 
   val authRoutes: Route = pathPrefix("auth") {
     pathPrefix("login") {

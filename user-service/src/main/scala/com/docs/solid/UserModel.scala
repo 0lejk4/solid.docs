@@ -1,12 +1,19 @@
 package com.docs.solid
 
+import java.time.LocalDateTime
+
+import io.circe.syntax._
+import scalest.admin.FieldTypeSchema
 import scalest.json.{CirceJsonSupport, `E&D`}
 
-object Model extends CirceJsonSupport {
+object UserModel extends CirceJsonSupport {
 
   case class User(id: Option[Int] = None,
                   username: String,
-                  password: String)
+                  password: String,
+                  email: String,
+                  creationDate: LocalDateTime,
+                  modificationDate: Option[LocalDateTime] = None)
 
   object User {
     def tupled = (User.apply _).tupled
@@ -20,7 +27,7 @@ object Model extends CirceJsonSupport {
     implicit val ed: `E&D`[LoginRequest] = circeObject
   }
 
-  case class RegisterRequest(username: String, password: String)
+  case class RegisterRequest(username: String, password: String, email: String)
 
   object RegisterRequest {
     implicit val ed: `E&D`[RegisterRequest] = circeObject
@@ -37,5 +44,7 @@ object Model extends CirceJsonSupport {
   object SuccessResponse {
     implicit val ed: `E&D`[SuccessResponse] = circeObject
   }
+
+  implicit val date: FieldTypeSchema[LocalDateTime] = FieldTypeSchema(Some("string-input"), Some("string-output"), Some("".asJson))
 
 }

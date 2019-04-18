@@ -1,30 +1,38 @@
 package com.docs.solid
 
-import com.docs.solid.Model.User
-import scalest.admin.admin.H2ProfileProvider
-import scalest.admin.slick.EntityActions
+import java.time.LocalDateTime
 
-object Users extends EntityActions with H2ProfileProvider {
+import com.docs.solid.UserModel.User
+import scalest.admin.slick.JdbcProfileProvider.PostgresProfileProvider
+import scalest.admin.slick.SlickModel
+
+object Users extends SlickModel with PostgresProfileProvider {
 
   import jdbcProfile.api._
 
   type Id = Int
   type Model = User
-  type EntityTable = UsersTable
+  type ModelTable = UsersTable
 
   override val idData = IdData(_.id, _.copy(_))
 
   val query = TableQuery[UsersTable]
 
-  class UsersTable(tag: Tag) extends Table[User](tag, "users") with Identified {
+  class UsersTable(tag: Tag) extends SlickModelTable(tag, "users") {
 
     val id = column[Int]("id", O.AutoInc, O.PrimaryKey)
 
     val username = column[String]("username")
 
-    val password = column[String]("passwrod")
+    val password = column[String]("password")
 
-    override def * = (id.?, username, password).mapTo[User]
+    val email = column[String]("email")
+
+    val creationDate = column[LocalDateTime]("creation_date")
+
+    val modificationDate = column[Option[LocalDateTime]]("modification_date")
+
+    override def * = (id.?, username, password, email, creationDate, modificationDate).mapTo[User]
   }
 
 }

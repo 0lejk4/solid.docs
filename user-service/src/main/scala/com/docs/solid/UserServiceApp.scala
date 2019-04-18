@@ -5,13 +5,13 @@ import akka.http.scaladsl.server.HttpApp
 import scalest.admin.AdminExtension
 import scalest.admin.slick.SlickModelAdmin
 import slick.basic.DatabaseConfig
-import slick.jdbc.H2Profile
+import slick.jdbc.PostgresProfile
 
 import scala.concurrent.ExecutionContext
 
-object AuthServiceApp extends HttpApp
-  with AuthServiceComponent
-  with AuthServiceApi
+object UserServiceApp extends HttpApp
+  with UserServiceComponent
+  with UserServiceApi
   with App {
 
   val system = ActorSystem()
@@ -20,11 +20,11 @@ object AuthServiceApp extends HttpApp
 
   implicit val ec: ExecutionContext = system.dispatcher
 
-  implicit val dc: DatabaseConfig[H2Profile] = DatabaseConfig.forConfig[H2Profile]("slick", system.settings.config)
+  implicit val dc: DatabaseConfig[PostgresProfile] = DatabaseConfig.forConfig[PostgresProfile]("slick", system.settings.config)
 
   val authService = new AuthService()
 
-  val admin = new AdminExtension(SlickModelAdmin(Users))
+  val admin = AdminExtension(SlickModelAdmin(Users))
 
   override protected def routes = admin.route ~ authRoutes
 
