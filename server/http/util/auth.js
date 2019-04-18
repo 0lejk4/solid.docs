@@ -4,7 +4,7 @@ module.exports = async (req, res, next) => {
 
     try {
 
-        const token = req.headers['authentification'];
+        const token = req.headers['authentication'];
     
         if (!token) {
             throw new Error('Authentification error');

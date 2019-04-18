@@ -11,7 +11,8 @@ module.exports = (app) => {
         return res.end(JSON.stringify({ error: 'missing required param `fileID`' }));
       }
 
-      const stream = await getFileStream(req.params.fileId);
+      // const stream = await getFileStream(req.params.fileId);
+      const stream = await getStream(req.params.fileId, req.user);
 
       res.statusCode = 200;
       return stream.pipe(res);
@@ -27,11 +28,13 @@ module.exports = (app) => {
   });
 
   app.post('/files', auth, async (req, res) => {
+
     try {
       const busboy = new Busboy({ headers: req.headers });
 
-      busboy.on('file', (fieldname, file, filename, encoding, mimetype) => {
-        const stream = createFileStream(filename, req.user);
+      busboy.on('file', async (fieldname, file, filename, encoding, mimetype) => {
+        // const stream = createFileStream(filename, req.user);
+        const stream = await createStream(filename, req.user);
         file.pipe(stream);
       });
 
@@ -54,7 +57,7 @@ module.exports = (app) => {
         return res.end(JSON.stringify({ error: 'missing required param `fileID`' }));
       }
 
-      await deleteFile(req.params.fileId);
+      await deleteFile(req.params.fileId, req.user);
 
       res.statusCode = 204;
       return res.end();
@@ -86,7 +89,7 @@ module.exports = (app) => {
                   <br>
                   <!-- Form starts here -->
                   <!-- <form action="/files" enctype="multipart/form-data" method="post"> -->
-                  <form action="/test" enctype="multipart/form-data" method="post">
+                  <form action="/files" enctype="multipart/form-data" method="post">
                       <!-- Field to choose the files to be uploaded -->
                       <label class="up_styles">
                           <input type="file" name="upload" multiple />
@@ -104,29 +107,5 @@ module.exports = (app) => {
           </div>
       </body>
       </html>`);
-  });
-
-
-  app.post('/test', async (req, res) => {
-    try {
-      const busboy = new Busboy({ headers: req.headers });
-
-      busboy.on('file', async (fieldname, file, filename, encoding, mimetype) => {
-        // const stream = createFileStream(filename, req.user);
-        req.user = 'vitpavlenko';
-        const stream = await createStream(filename, req.user);
-        file.pipe(stream);
-      });
-
-      busboy.on('finish', () => {
-        res.statusCode = 201;
-        res.end();
-      });
-
-      return req.pipe(busboy);
-    } catch (err) {
-      res.statusCode = 415;
-      return res.end(JSON.stringify({ error: err.message }));
-    }
   });
 };

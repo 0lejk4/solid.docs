@@ -12,7 +12,7 @@ module.exports = {
     return createReadStream(file);
   },
   createFileStream: (name, user = '') => {
-    const path = join(__dirname, '..', '..', 'data', user, name);
+    const path = join(__dirname, '..', 'data', user, name);
     return createWriteStream(path);
   },
 };
