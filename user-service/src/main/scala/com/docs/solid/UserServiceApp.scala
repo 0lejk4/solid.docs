@@ -7,27 +7,30 @@ import scalest.admin.slick.SlickModelAdmin
 import slick.basic.DatabaseConfig
 import slick.jdbc.PostgresProfile
 import UserModel._
+import com.typesafe.config.Config
 
 import scala.concurrent.ExecutionContext
 
 object UserServiceApp extends HttpApp
   with UserServiceComponent
   with UserServiceApi
+  with UserServiceEnvironment
   with App {
 
-  val system = ActorSystem()
-
-  override val secret = system.settings.config.getString("jwt.secret")
-
+  implicit val system: ActorSystem = ActorSystem()
+  val config: Config = system.settings.config
   implicit val ec: ExecutionContext = system.dispatcher
+  implicit val dc: DatabaseConfig[PostgresProfile] = DatabaseConfig.forConfig[PostgresProfile]("slick", config)
+  val jwtSecret = config.getString("jwt.secret")
+  val systemToken = config.getString("systemToken")
 
-  implicit val dc: DatabaseConfig[PostgresProfile] = DatabaseConfig.forConfig[PostgresProfile]("slick", system.settings.config)
+  println(config)
 
-  val authService = new AuthService()
+  val userService = new UserService()
 
   val admin = AdminExtension(SlickModelAdmin(Users))
 
   override protected def routes = admin.route ~ authRoutes
 
-  startServer("0.0.0.0", system.settings.config.getInt("http.port"), system)
+  startServer("0.0.0.0", config.getInt("http.port"), system)
 }

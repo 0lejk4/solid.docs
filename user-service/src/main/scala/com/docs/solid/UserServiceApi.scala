@@ -9,16 +9,17 @@ trait UserServiceApi extends Directives { self: UserServiceComponent =>
     pathPrefix("login") {
       pathEndOrSingleSlash {
         entity(as[LoginRequest]) { request =>
-          complete(authService.login(request))
+          complete(userService.login(request))
         }
       }
     } ~
       pathPrefix("register") {
         pathEndOrSingleSlash {
           entity(as[RegisterRequest]) { request =>
-            complete(authService.register(request))
+            complete(userService.register(request))
           }
         }
       }
+    //Todo: user-api
   }
 }

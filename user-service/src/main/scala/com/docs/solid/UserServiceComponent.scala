@@ -3,26 +3,25 @@ package com.docs.solid
 
 import java.time.LocalDateTime
 
-import com.docs.solid.UserModel.{ErrorResponse, LoginRequest, RegisterRequest, SuccessResponse, User}
-import slick.basic.DatabaseConfig
-import slick.jdbc.PostgresProfile
+import akka.http.scaladsl.model.HttpMethods.POST
+import akka.http.scaladsl.model.{HttpEntity, HttpMethod, HttpMethods, HttpRequest}
+import akka.http.scaladsl.{Http, HttpExt}
+import com.docs.solid.JwtUtils.JwtContent
+import com.docs.solid.UserModel.{ErrorResponse, LoginRequest, RegisterRequest, TokenResponse, User}
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.Future
 import scala.util.{Failure, Success}
 
-//Todo: JWT token and encyption methods
-trait UserServiceComponent {
-  val authService: AuthService
+trait UserServiceComponent { self: UserServiceEnvironment =>
+  val userService: UserService
 
-  val secret: String
-  val dc: DatabaseConfig[PostgresProfile]
-  implicit val ec: ExecutionContext
+  class UserService {
 
-  import dc.profile.api._
+    import dc.profile.api._
 
-  class AuthService {
+    val http: HttpExt = Http(system)
 
-    def register(request: RegisterRequest): Future[Either[ErrorResponse, SuccessResponse]] = {
+    def register(request: RegisterRequest): Future[Either[ErrorResponse, TokenResponse]] = {
       import request._
 
       val register = for {
@@ -39,33 +38,50 @@ trait UserServiceComponent {
       } yield result
 
       val query = register.asTry.flatMap {
-        case Success(_) => DBIO.successful(Right(SuccessResponse("info.register.success")))
-        case Failure(_) => DBIO.successful(Left(ErrorResponse("error.user.exists")))
+        case Success(_) =>
+          val response = TokenResponse(JwtUtils.token(jwtSecret, JwtContent(username)))
+          DBIO.successful(Right(response))
+        case Failure(_) =>
+          val response = ErrorResponse("error.user.exists")
+          DBIO.successful(Left(response))
       }
 
-      dc.db.run(query)
+      for {
+        result <- execute(query)
+        _ <- onRegisterRequest(username)
+      } yield result
     }
 
-    def login(request: LoginRequest): Future[Either[ErrorResponse, String]] = {
+    private def onRegisterRequest(username: String) = {
+      val request = HttpRequest(
+        method = POST,
+        uri = s"http://storage/createsubdir?systemToken=$systemToken",
+        entity = HttpEntity(s"{ username : $username }")
+      )
+
+      http.singleRequest(request)
+    }
+
+    def login(request: LoginRequest): Future[Either[ErrorResponse, TokenResponse]] = {
       import request._
 
-      val userQuery = for {
-        user <- findByUsername(username).head
-      } yield user
-
-      val query = userQuery.asTry.flatMap {
-        case Success(u) => DBIO.successful {
-          if (u.password == password) Right("user.token")
+      execute(findByUsername(username).headOption).map {
+        _.toRight(ErrorResponse("error.user.not-found")).flatMap { user =>
+          if (user.password == password) Right(TokenResponse(JwtUtils.token(jwtSecret, JwtContent(username))))
           else Left(ErrorResponse("error.password.not-match"))
         }
-        case Failure(_) => DBIO.successful(Left(ErrorResponse("error.user.not-found")))
       }
+    }
 
-      dc.db.run(query)
+    def execute[T](action: DBIO[T]): Future[T] = {
+      dc.db.run(action)
+    }
+
+    def findByUsername(username: String) = {
+      Users.query.filter(_.username === username).result
     }
   }
 
-  private def findByUsername(username: String) = {
-    Users.query.filter(_.username === username).result
-  }
+
 }
+
