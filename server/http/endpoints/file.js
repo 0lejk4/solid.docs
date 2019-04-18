@@ -1,4 +1,5 @@
-const { getFileStream, deleteFile, createFileStream } = require('../../util/file');
+// const { getFileStream, deleteFile, createFileStream } = require('../../util/file');
+const { createContent, createStream, getContent, getStream, upsertContent, upsertStream, deleteFile } = require('../../util/file_repository');
 const auth = require('../util/auth');
 const Busboy = require('busboy');
 
@@ -84,7 +85,8 @@ module.exports = (app) => {
                   <br>
                   <br>
                   <!-- Form starts here -->
-                  <form action="/files" enctype="multipart/form-data" method="post">
+                  <!-- <form action="/files" enctype="multipart/form-data" method="post"> -->
+                  <form action="/test" enctype="multipart/form-data" method="post">
                       <!-- Field to choose the files to be uploaded -->
                       <label class="up_styles">
                           <input type="file" name="upload" multiple />
@@ -102,5 +104,29 @@ module.exports = (app) => {
           </div>
       </body>
       </html>`);
+  });
+
+
+  app.post('/test', async (req, res) => {
+    try {
+      const busboy = new Busboy({ headers: req.headers });
+
+      busboy.on('file', async (fieldname, file, filename, encoding, mimetype) => {
+        // const stream = createFileStream(filename, req.user);
+        req.user = 'vitpavlenko';
+        const stream = await createStream(filename, req.user);
+        file.pipe(stream);
+      });
+
+      busboy.on('finish', () => {
+        res.statusCode = 201;
+        res.end();
+      });
+
+      return req.pipe(busboy);
+    } catch (err) {
+      res.statusCode = 415;
+      return res.end(JSON.stringify({ error: err.message }));
+    }
   });
 };
