@@ -31,77 +31,65 @@ module.exports = (app) => {
     }
   });
 
-  app.post(
-    '/files',
-    // auth,
-    async (req, res) => {
-      req.user = 'oleg';
+  app.post('/files', auth, async (req, res) => {
+    try {
+      const busboy = new Busboy({ headers: req.headers });
 
-      try {
-        const busboy = new Busboy({ headers: req.headers });
+      let tmp = null;
+      const cmd = {};
 
-        let tmp = null;
-        const cmd = {};
+      busboy.on('file', async (_, file, filename) => {
+        tmp = join('..', 'data', 'tmp');
+        const fullpath = join(tmp, filename);
 
-        busboy.on('file', async (_, file, filename) => {
-          tmp = join('..', 'data', 'tmp');
-          const fullpath = join(tmp, filename);
+        const stream = await createStream(fullpath);
 
-          const stream = await createStream(fullpath);
-
-          cmd.type = filename.split('.')[1].toUpperCase();
-          cmd.username = req.user;
-          cmd.action = 'CREATE';
-          cmd.filename = filename;
-          cmd.tmp = tmp;
-
-          file.pipe(stream);
-        });
-
-        busboy.on('finish', async () => {
-          await HandlerManager.handle(cmd);
-
-          res.statusCode = 201;
-          res.end();
-        });
-
-        return req.pipe(busboy);
-      } catch (err) {
-        res.statusCode = 415;
-        return res.end(JSON.stringify({ error: err.message }));
-      }
-    },
-  );
-
-  app.post(
-    '/file/action',
-    // auth,
-    async (req, res) => {
-      req.user = 'oleg';
-
-      try {
-        let body = '';
-        req.on('data', (chunck) => { body += chunck; });
-
-        await new Promise((resolve, reject) => {
-          req.on('end', resolve);
-          req.on('error', reject);
-        });
-
-        const cmd = JSON.parse(body);
-
+        cmd.type = filename.split('.')[1].toUpperCase();
         cmd.username = req.user;
+        cmd.action = 'CREATE';
+        cmd.filename = filename;
+        cmd.tmp = tmp;
 
-        const result = await HandlerManager.handle(cmd);
+        file.pipe(stream);
+      });
 
-        res.statusCode = 200;
-        return res.end(JSON.stringify(result));
-      } catch (err) {
-        res.statusCode = 415;
-        return res.end(JSON.stringify({ error: err.message }));
-      }
-    },
-  );
+      busboy.on('finish', async () => {
+        await HandlerManager.handle(cmd);
+
+        res.statusCode = 201;
+        res.end();
+      });
+
+      return req.pipe(busboy);
+    } catch (err) {
+      res.statusCode = 415;
+      return res.end(JSON.stringify({ error: err.message }));
+    }
+  });
+
+  app.post('/file/action', auth, async (req, res) => {
+    try {
+      let body = '';
+      req.on('data', (chunck) => { body += chunck; });
+
+      await new Promise((resolve, reject) => {
+        req.on('end', resolve);
+        req.on('error', reject);
+      });
+
+      const cmd = JSON.parse(body);
+
+      cmd.username = req.user;
+
+      const result = await HandlerManager.handle(cmd);
+
+      res.statusCode = 200;
+      return res.end(JSON.stringify(result));
+    } catch (err) {
+      res.statusCode = 415;
+      return res.end(JSON.stringify({ error: err.message }));
+    }
+  });
 
   app.delete('/files/:fileId', auth, async (req, res) => {
     try {
