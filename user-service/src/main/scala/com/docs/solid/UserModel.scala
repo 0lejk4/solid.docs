@@ -21,6 +21,12 @@ object UserModel extends CirceJsonSupport {
     implicit val ed: `E&D`[User] = circeObject
   }
 
+  case class UserQueryFilter(username: Option[String] = None, email: Option[String] = None)
+
+  object UserQueryFilter {
+    implicit val ed: `E&D`[UserQueryFilter] = circeObject
+  }
+
   case class LoginRequest(username: String, password: String)
 
   object LoginRequest {
