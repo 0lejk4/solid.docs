@@ -2,54 +2,54 @@ const { promises: fs, createReadStream, createWriteStream, constants } = require
 const { join } = require('path');
 
 module.exports = {
-    getStream: async (name, user) => {
-        const path = join(__dirname, '..', 'data', user, name); 
-        await fs.access(path, constants.F_OK | constants.R_OK);
-        return createReadStream(path);
+    getStream: async (path) => {
+        const fullpath = join(__dirname, '..', 'data', path); 
+        await fs.access(fullpath, constants.F_OK | constants.R_OK);
+        return createReadStream(fullpath);
     },
-    getContent: async (name, user) => {
-        const path = join(__dirname, '..', 'data', user, name); 
-        await fs.access(path, constants.F_OK | constants.R_OK);
-        return fs.readFile(path);    
+    getContent: async (path) => {
+        const fullpath = join(__dirname, '..', 'data', path); 
+        await fs.access(fullpath, constants.F_OK | constants.R_OK);
+        return fs.readFile(fullpath);    
     },
-    upsertContent: async (name, user, data) => {
-        const path = join(__dirname, '..', 'data', user, name);
-        await fs.access(path, constants.F_OK | constants.W_OK);
-        return fs.writeFile(path, data);
+    upsertContent: async (path, content) => {
+        const fullpath = join(__dirname, '..', 'data', path);
+        await fs.access(fullpath, constants.F_OK | constants.W_OK);
+        return fs.writeFile(fullpath, content);
     },
-    upsertStream: async (name, user) => {
-        const path = join(__dirname, '..', 'data', user, name);
-        await fs.access(path, constants.F_OK | constants.W_OK);
-        return createWriteStream(path);    
+    upsertStream: async (path) => {
+        const fullpath = join(__dirname, '..', 'data', path);
+        await fs.access(fullpath, constants.F_OK | constants.W_OK);
+        return createWriteStream(fullpath);    
     },
-    createContent: async (name, user, data) => {
-        const path = join(__dirname, '..', 'data', user, name);
+    createContent: async (path, content) => {
+        const fullpath = join(__dirname, '..', 'data', path);
         
         try {
-            await fs.access(path, constants.F_OK);
+            await fs.access(fullpath, constants.F_OK);
             throw new Error('cannot Create file, it already exists');
         } catch (err) {
             if (err.code === 'ENOENT') {
-                return fs.writeFile(path, data);
+                return fs.writeFile(fullpath, content);
             }
             throw err;
         }
     },
-    createStream: async (name, user) => {
-        const path = join(__dirname, '..', 'data', user, name);
+    createStream: async (path) => {
+        const fullpath = join(__dirname, '..', 'data', path);
         
         try {
-            await fs.access(path, constants.F_OK);
+            await fs.access(fullpath, constants.F_OK);
             throw new Error('cannot Create file, it already exists');
         } catch (err) {
             if (err.code === 'ENOENT') {
-                return createWriteStream(path);
+                return createWriteStream(fullpath);
             }
             throw err;
         }
     },
-    deleteFile: (name, user) => {
-        const file = join(__dirname, '..', 'data', user, name); 
+    deleteFile: (path) => {
+        const file = join(__dirname, '..', 'data', path); 
         return fs.unlink(file);
     },
 };

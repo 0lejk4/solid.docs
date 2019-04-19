@@ -8,16 +8,16 @@ module.exports = (app) => {
   app.post('/createsubdir', async (req, res) => {
     try {
       let body = '';
-      req.on('data', (chunck) => body += chunck);
+      req.on('data', (chunck) => { body += chunck; });
 
-      await new Promise((res, rej) => {
-        req.on('end', res);
-        req.on('err', rej);
+      await new Promise((resolve, reject) => {
+        req.on('end', resolve);
+        req.on('err', reject);
       });
 
       const { username } = JSON.parse(body);
 
-      if (req.query.systemToken != SYSTEM_TOKEN) {
+      if (req.query.systemToken !== SYSTEM_TOKEN) {
         res.statusCode = 401;
         return res.end(JSON.stringify({ error: '`systemToken` required' }));
       }
