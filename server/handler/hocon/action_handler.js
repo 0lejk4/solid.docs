@@ -2,7 +2,7 @@ const { createContent, createStream, getContent, getStream, upsertContent, upser
 const { join } = require('path');
 
 const HoconHandler = {
-  'CREATE': {
+  CREATE: {
     handle: async (cmd) => {
       console.log(cmd);
 
@@ -13,7 +13,7 @@ const HoconHandler = {
       (await getStream(tmpPath)).pipe(stream);
     },
   },
-  'LENGTH': {
+  LENGTH: {
     handle: async (cmd) => {
       console.log(cmd);
 
