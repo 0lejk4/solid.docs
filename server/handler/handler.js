@@ -2,28 +2,27 @@ const { createContent, createStream, getContent, getStream, upsertContent, upser
 
 class HandlerManager {
 
-    constructor(handlers) {
-        this.handlers = handlers;
-    }
+  constructor(handlers) {
+    this.handlers = handlers;
+  }
 
-    handle(cmd) {
-        const type = cmd.type;
-        const action = cmd.action;
+  handle(cmd) {
+    const { type, action } = cmd;
 
-        const typeHandler = this.handlers[type];
+    const typeHandler = this.handlers[type];
 
-        if (!typeHandler) throw new Error("No type handler");
+    if (!typeHandler) throw new Error("No type handler");
 
-        const cmdHandler = typeHandler[action];
+    const cmdHandler = typeHandler[action];
 
-        if (!cmdHandler) throw new Error("No cmd handler");
+    if (!cmdHandler) throw new Error("No cmd handler");
 
-       return cmdHandler.handle(cmd);
-    }
-};
+    return cmdHandler.handle(cmd);
+  }
+}
 
 const HOCON = require('./hocon/action_handler');
 
 module.exports = new HandlerManager({
-    HOCON
+  HOCON,
 });
