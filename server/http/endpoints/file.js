@@ -1,7 +1,12 @@
 // const { getFileStream, deleteFile, createFileStream } = require('../../util/file');
-const { createContent, createStream, getContent, getStream, upsertContent, upsertStream, deleteFile } = require('../../util/file_repository');
+const {
+  createContent, createStream, getContent, getStream, upsertContent, upsertStream, deleteFile,
+} = require('../../util/file_repository');
 const auth = require('../util/auth');
 const Busboy = require('busboy');
+
+const { join } = require('path');
+const HandlerManager = require('../../handler/handler');
 
 module.exports = (app) => {
   app.get('/files/:fileId', auth, async (req, res) => {
@@ -11,7 +16,6 @@ module.exports = (app) => {
         return res.end(JSON.stringify({ error: 'missing required param `fileID`' }));
       }
 
-      // const stream = await getFileStream(req.params.fileId);
       const stream = await getStream(req.params.fileId, req.user);
 
       res.statusCode = 200;
@@ -27,28 +31,77 @@ module.exports = (app) => {
     }
   });
 
-  app.post('/files', auth, async (req, res) => {
+  app.post(
+    '/files',
+    // auth,
+    async (req, res) => {
+      req.user = 'oleg';
 
-    try {
-      const busboy = new Busboy({ headers: req.headers });
+      try {
+        const busboy = new Busboy({ headers: req.headers });
 
-      busboy.on('file', async (fieldname, file, filename, encoding, mimetype) => {
-        // const stream = createFileStream(filename, req.user);
-        const stream = await createStream(filename, req.user);
-        file.pipe(stream);
-      });
+        let tmp = null;
+        const cmd = {};
 
-      busboy.on('finish', () => {
-        res.statusCode = 201;
-        res.end();
-      });
+        busboy.on('file', async (_, file, filename) => {
+          tmp = join('..', 'data', 'tmp');
+          const fullpath = join(tmp, filename);
 
-      return req.pipe(busboy);
-    } catch (err) {
-      res.statusCode = 415;
-      return res.end(JSON.stringify({ error: err.message }));
-    }
-  });
+          const stream = await createStream(fullpath);
+
+          cmd.type = filename.split('.')[1].toUpperCase();
+          cmd.username = req.user;
+          cmd.action = 'CREATE';
+          cmd.filename = filename;
+          cmd.tmp = tmp;
+
+          file.pipe(stream);
+        });
+
+        busboy.on('finish', async () => {
+          await HandlerManager.handle(cmd);
+
+          res.statusCode = 201;
+          res.end();
+        });
+
+        return req.pipe(busboy);
+      } catch (err) {
+        res.statusCode = 415;
+        return res.end(JSON.stringify({ error: err.message }));
+      }
+    },
+  );
+
+  app.post(
+    '/file/action',
+    // auth,
+    async (req, res) => {
+      req.user = 'oleg';
+
+      try {
+        let body = '';
+        req.on('data', (chunck) => { body += chunck; });
+
+        await new Promise((resolve, reject) => {
+          req.on('end', resolve);
+          req.on('error', reject);
+        });
+
+        const cmd = JSON.parse(body);
+
+        cmd.username = req.user;
+
+        const result = await HandlerManager.handle(cmd);
+
+        res.statusCode = 200;
+        return res.end(JSON.stringify(result));
+      } catch (err) {
+        res.statusCode = 415;
+        return res.end(JSON.stringify({ error: err.message }));
+      }
+    },
+  );
 
   app.delete('/files/:fileId', auth, async (req, res) => {
     try {

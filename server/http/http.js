@@ -14,7 +14,7 @@ module.exports = class RestServer {
         else {
           console.log(`Http interface is successully running on ${this.port} port`);
           res();
-        };
+        }
       });
     });
   }
