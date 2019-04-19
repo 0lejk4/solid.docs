@@ -29,6 +29,9 @@ services:
       - PORT=3000
     depends_on:
       - postgres
+    volumes:
+      - ./server/data/:/server/data
+
   user-service:
     restart: always
     build: ./user-service/.
