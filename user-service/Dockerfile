@@ -2,6 +2,12 @@ FROM hseeberger/scala-sbt
 
 WORKDIR /app
 
+COPY project /app/project
+
+COPY build.sbt /app/build.sbt
+
+RUN sbt update
+
 COPY . /app
 
 RUN sbt assembly

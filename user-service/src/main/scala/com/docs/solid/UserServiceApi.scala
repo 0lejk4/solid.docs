@@ -5,7 +5,7 @@ import com.docs.solid.UserModel._
 
 trait UserServiceApi extends Directives { self: UserServiceComponent =>
 
-  val authRoutes: Route = pathPrefix("auth") {
+  def authRoutes: Route = pathPrefix("auth") {
     pathPrefix("login") {
       pathEndOrSingleSlash {
         entity(as[LoginRequest]) { request =>

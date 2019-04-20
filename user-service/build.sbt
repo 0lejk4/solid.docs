@@ -13,13 +13,23 @@ scalacOptions += "-Ypartial-unification"
 
 assemblyJarName in assembly := "user-service.jar"
 
+test in assembly := {}
+
 libraryDependencies ++= Seq(
   "io.github.0lejk4" %% "scalest-core" % scalestV, // core,
   "io.github.0lejk4" %% "scalest-admin-slick" % scalestV, // slick concrete admin panel
-  "org.scalatest" %% "scalatest" % "3.0.5" % "test",
-  "com.typesafe.akka" %% "akka-slf4j" % "2.5.20",
   "org.postgresql" % "postgresql" % "42.2.5",
-  "ch.qos.logback" % "logback-classic" % "1.2.3",
   "com.pauldijou" %% "jwt-core" % "2.1.0",
-  "com.pauldijou" %% "jwt-circe" % "2.1.0"
+  "com.pauldijou" %% "jwt-circe" % "2.1.0",
+  "org.scalatest" %% "scalatest" % "3.0.5" % "test",
+  //____________________TEST DEPENDENCIES________________________
+  "org.scalamock" %% "scalamock" % "4.1.0" % Test,
+  "org.scalatest" %% "scalatest" % "3.0.4" % Test,
+  "org.mockito" % "mockito-core" % "2.10.0" % Test,
+  "org.flywaydb" % "flyway-core" % "5.2.4" % Test,
+  "com.dimafeng" %% "testcontainers-scala" % "0.24.0" % Test,
+  "org.testcontainers" % "postgresql" % "1.11.2" % Test,
+  "com.typesafe.akka" %% "akka-testkit" % "2.5.20" % Test,
+  "com.typesafe.akka" %% "akka-stream-testkit" % "2.5.20" % Test,
+  "com.typesafe.akka" %% "akka-http-testkit" % "10.1.7" % Test
 )
