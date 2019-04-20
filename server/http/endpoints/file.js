@@ -7,6 +7,7 @@ const Busboy = require('busboy');
 
 const { join } = require('path');
 const HandlerManager = require('../../handler/handler');
+const body = require('../util/body');
 
 module.exports = (app) => {
   app.get('/files/:fileId', auth, async (req, res) => {
@@ -67,17 +68,9 @@ module.exports = (app) => {
     }
   });
 
-  app.post('/file/action', auth, async (req, res) => {
+  app.post('/file/action', auth, body, async (req, res) => {
     try {
-      let body = '';
-      req.on('data', (chunck) => { body += chunck; });
-
-      await new Promise((resolve, reject) => {
-        req.on('end', resolve);
-        req.on('error', reject);
-      });
-
-      const cmd = JSON.parse(body);
+      const cmd = req.body;
 
       cmd.username = req.user;
 
