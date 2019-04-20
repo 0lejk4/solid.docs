@@ -20,7 +20,7 @@ object Users extends SlickModel with PostgresProfileProvider {
 
   class UsersTable(tag: Tag) extends SlickModelTable(tag, "users") {
 
-    val id = column[Int]("id", O.AutoInc, O.PrimaryKey)
+    val id = column[Int]("id", O.PrimaryKey, O.AutoInc)
 
     val username = column[String]("username")
 
@@ -33,6 +33,7 @@ object Users extends SlickModel with PostgresProfileProvider {
     val modificationDate = column[Option[LocalDateTime]]("modification_date")
 
     override def * = (id.?, username, password, email, creationDate, modificationDate).mapTo[User]
+
   }
 
 }

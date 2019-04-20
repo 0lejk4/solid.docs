@@ -22,6 +22,11 @@ libraryDependencies ++= Seq(
   "com.pauldijou" %% "jwt-core" % "2.1.0",
   "com.pauldijou" %% "jwt-circe" % "2.1.0",
   "org.scalatest" %% "scalatest" % "3.0.5" % "test",
+  //____________________TEST DEPENDENCIES________________________
+  "org.scalamock" %% "scalamock" % "4.1.0" % Test,
+  "org.scalatest" %% "scalatest" % "3.0.4" % Test,
+  "org.mockito" % "mockito-core" % "2.10.0" % Test,
+  "org.flywaydb" % "flyway-core" % "5.2.4" % Test,
   "com.dimafeng" %% "testcontainers-scala" % "0.24.0" % Test,
   "org.testcontainers" % "postgresql" % "1.11.2" % Test,
   "com.typesafe.akka" %% "akka-testkit" % "2.5.20" % Test,

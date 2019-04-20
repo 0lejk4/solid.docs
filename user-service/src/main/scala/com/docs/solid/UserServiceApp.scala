@@ -2,12 +2,13 @@ package com.docs.solid
 
 import akka.actor.ActorSystem
 import akka.http.scaladsl.server.HttpApp
+import com.docs.solid.HttpClientComponent.AkkaHttpClientComponent
+import com.docs.solid.UserModel._
+import com.typesafe.config.Config
 import scalest.admin.AdminExtension
 import scalest.admin.slick.SlickModelAdmin
 import slick.basic.DatabaseConfig
 import slick.jdbc.PostgresProfile
-import UserModel._
-import com.typesafe.config.Config
 
 import scala.concurrent.ExecutionContext
 
@@ -15,6 +16,7 @@ object UserServiceApp extends HttpApp
   with UserServiceComponent
   with UserServiceApi
   with UserServiceEnvironment
+  with AkkaHttpClientComponent
   with App {
 
   implicit val system: ActorSystem = ActorSystem()
@@ -25,6 +27,8 @@ object UserServiceApp extends HttpApp
   val systemToken = config.getString("systemToken")
 
   println(config)
+
+  val httpClient = new AkkaHttpClient
 
   val userService = new UserService()
 

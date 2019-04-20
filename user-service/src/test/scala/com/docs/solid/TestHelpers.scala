@@ -6,8 +6,11 @@ import akka.actor.ActorSystem
 import akka.stream.ActorMaterializer
 import akka.testkit.TestKit
 import com.dimafeng.testcontainers.{ForAllTestContainer, PostgreSQLContainer}
+import com.docs.solid.HttpClientComponent.AkkaHttpClientComponent
 import com.docs.solid.UserModel._
 import com.typesafe.config.{Config, ConfigFactory}
+import org.flywaydb.core.Flyway
+import org.scalamock.scalatest.MockFactory
 import org.scalatest.concurrent.{Eventually, ScalaFutures}
 import org.scalatest.time.SpanSugar
 import org.scalatest.{BeforeAndAfterAll, Suite, _}
@@ -19,6 +22,7 @@ import scala.concurrent.duration._
 sealed trait GenericTest extends Suite
   with Informing
   with Matchers
+  with Inside
   with Eventually
   with ScalaFutures
   with GivenWhenThen
@@ -27,7 +31,7 @@ sealed trait GenericTest extends Suite
   with SpanSugar
   with OptionValues
 
-trait RichFunSuite extends FunSuiteLike with GenericTest
+trait RichFunSuite extends FunSuiteLike with GenericTest with MockFactory
 
 trait TestHelpers {
   def createTestUser(id: Option[Int] = None,
@@ -37,6 +41,7 @@ trait TestHelpers {
                      creationDate: LocalDateTime = LocalDateTime.now(),
                      modificationDate: Option[LocalDateTime] = None): User = {
     User(
+      id = id,
       username = username,
       password = password,
       email = email,
@@ -53,13 +58,20 @@ trait TestDatabaseContainer extends ForAllTestContainer { self: TestSuite =>
   override val container = PostgreSQLContainer("postgres:9.6.9")
 
   override def afterStart(): Unit = {
+    import container._
+
     config = ConfigFactory.parseString {
       s"""
-         |slick.db.url = "${container.jdbcUrl}"
-         |slick.db.user = "${container.username}"
-         |slick.db.password = "${container.password}"
+         |slick.db.url = "$jdbcUrl"
+         |slick.db.user = "$username"
+         |slick.db.password = "$password"
       """.stripMargin
     }.withFallback(system.settings.config)
+
+    Flyway.configure()
+      .dataSource(jdbcUrl, username, password)
+      .load()
+      .migrate()
   }
 }
 
@@ -79,10 +91,18 @@ trait TestActorSystem extends BeforeAndAfterAll { self: Suite =>
 }
 
 
-trait TestApp extends UserServiceEnvironment
-  with UserServiceComponent
-  with UserServiceApi {
-  def admin = AdminExtension(SlickModelAdmin(Users))
+trait TestAppComponent { self: MockFactory =>
 
-  def routes = admin.route ~ authRoutes
+  trait TestApp extends UserServiceEnvironment
+    with UserServiceComponent
+    with AkkaHttpClientComponent
+    with UserServiceApi {
+
+    val httpClient: HttpClient = mock[HttpClient]
+
+    def admin = AdminExtension(SlickModelAdmin(Users))
+
+    def routes = admin.route ~ authRoutes
+  }
+
 }
