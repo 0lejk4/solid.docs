@@ -2,22 +2,17 @@ const { SYSTEM_TOKEN } = process.env;
 const { mkdir } = require('fs').promises;
 const { join } = require('path');
 
+const body = require('../util/body');
+
 const usernameReg = /^\w+$/g;
 
 module.exports = (app) => {
-  app.post('/createsubdir', async (req, res) => {
+  app.post('/createsubdir', body, async (req, res) => {
     try {
-      let body = '';
-      req.on('data', (chunck) => { body += chunck; });
-
-      await new Promise((resolve, reject) => {
-        req.on('end', resolve);
-        req.on('err', reject);
-      });
-
-      const { username } = JSON.parse(body);
+      const { username } = req.body;
 
       if (req.query.systemToken !== SYSTEM_TOKEN) {
+        console.log(req.query.systemToken, SYSTEM_TOKEN);
         res.statusCode = 401;
         return res.end(JSON.stringify({ error: '`systemToken` required' }));
       }
