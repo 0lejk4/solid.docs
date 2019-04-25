@@ -1,37 +1,15 @@
-// const { getFileStream, deleteFile, createFileStream } = require('../../util/file');
 const {
   createContent, createStream, getContent, getStream, upsertContent, upsertStream, deleteFile,
 } = require('../../util/file_repository');
 const auth = require('../util/auth');
 const Busboy = require('busboy');
 
+const { Readable } = require('stream');
 const { join } = require('path');
 const HandlerManager = require('../../handler/handler');
 const body = require('../util/body');
 
 module.exports = (app) => {
-  app.get('/files/:fileId', auth, async (req, res) => {
-    try {
-      if (!req.params.fileId) {
-        res.statusCode = 400;
-        return res.end(JSON.stringify({ error: 'missing required param `fileID`' }));
-      }
-
-      const stream = await getStream(req.params.fileId, req.user);
-
-      res.statusCode = 200;
-      return stream.pipe(res);
-    } catch (err) {
-      if (err.code === 'ENOENT') {
-        res.statusCode = 404;
-        return res.end(JSON.stringify({ error: 'Not Found' }));
-      }
-
-      res.statusCode = 400;
-      return res.end(JSON.stringify({ error: err.message }));
-    }
-  });
-
   app.post('/files', auth, async (req, res) => {
     try {
       const busboy = new Busboy({ headers: req.headers });
@@ -46,7 +24,7 @@ module.exports = (app) => {
         const stream = await createStream(fullpath);
 
         cmd.type = filename.split('.')[1].toUpperCase();
-        cmd.username = req.user;
+        cmd.username = req.user || 'test';
         cmd.action = 'CREATE';
         cmd.filename = filename;
         cmd.tmp = tmp;
@@ -72,31 +50,18 @@ module.exports = (app) => {
     try {
       const cmd = req.body;
 
-      cmd.username = req.user;
+      cmd.username = req.user || 'test';
 
       const result = await HandlerManager.handle(cmd);
-
       res.statusCode = 200;
+
+      if (result instanceof Readable) {
+        return result.pipe(res);
+      }
+
       return res.end(JSON.stringify(result));
     } catch (err) {
       res.statusCode = 415;
-      return res.end(JSON.stringify({ error: err.message }));
-    }
-  });
-
-  app.delete('/files/:fileId', auth, async (req, res) => {
-    try {
-      if (!req.params.fileId) {
-        res.statusCode = 400;
-        return res.end(JSON.stringify({ error: 'missing required param `fileID`' }));
-      }
-
-      await deleteFile(req.params.fileId, req.user);
-
-      res.statusCode = 204;
-      return res.end();
-    } catch (err) {
-      res.statusCode = 400;
       return res.end(JSON.stringify({ error: err.message }));
     }
   });
