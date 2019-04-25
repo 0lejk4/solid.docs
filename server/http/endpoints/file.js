@@ -1,4 +1,3 @@
-// const { getFileStream, deleteFile, createFileStream } = require('../../util/file');
 const {
   createContent, createStream, getContent, getStream, upsertContent, upsertStream, deleteFile,
 } = require('../../util/file_repository');
@@ -11,28 +10,6 @@ const HandlerManager = require('../../handler/handler');
 const body = require('../util/body');
 
 module.exports = (app) => {
-  app.get('/files/:fileId', auth, async (req, res) => {
-    try {
-      if (!req.params.fileId) {
-        res.statusCode = 400;
-        return res.end(JSON.stringify({ error: 'missing required param `fileID`' }));
-      }
-
-      const stream = await getStream(req.params.fileId, req.user);
-
-      res.statusCode = 200;
-      return stream.pipe(res);
-    } catch (err) {
-      if (err.code === 'ENOENT') {
-        res.statusCode = 404;
-        return res.end(JSON.stringify({ error: 'Not Found' }));
-      }
-
-      res.statusCode = 400;
-      return res.end(JSON.stringify({ error: err.message }));
-    }
-  });
-
   app.post('/files', auth, async (req, res) => {
     try {
       const busboy = new Busboy({ headers: req.headers });
@@ -85,23 +62,6 @@ module.exports = (app) => {
       return res.end(JSON.stringify(result));
     } catch (err) {
       res.statusCode = 415;
-      return res.end(JSON.stringify({ error: err.message }));
-    }
-  });
-
-  app.delete('/files/:fileId', auth, async (req, res) => {
-    try {
-      if (!req.params.fileId) {
-        res.statusCode = 400;
-        return res.end(JSON.stringify({ error: 'missing required param `fileID`' }));
-      }
-
-      await deleteFile(req.params.fileId, req.user);
-
-      res.statusCode = 204;
-      return res.end();
-    } catch (err) {
-      res.statusCode = 400;
       return res.end(JSON.stringify({ error: err.message }));
     }
   });
