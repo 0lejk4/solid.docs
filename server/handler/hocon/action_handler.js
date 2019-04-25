@@ -1,18 +1,9 @@
 const { createContent, createStream, getContent, getStream, upsertContent, upsertStream, deleteFile } = require('../../util/file_repository');
 const { join } = require('path');
 
-const HoconHandler = {
-  CREATE: {
-    handle: async (cmd) => {
-      console.log(cmd);
+const Default = require('../default')
 
-      const path = join(cmd.username, cmd.filename);
-      const stream = await createStream(path);
-
-      const tmpPath = join('tmp', cmd.filename);
-      (await getStream(tmpPath)).pipe(stream);
-    },
-  },
+const HoconHandler = Object.assign({}, Default, {
   LENGTH: {
     handle: async (cmd) => {
       console.log(cmd);
@@ -23,6 +14,6 @@ const HoconHandler = {
       return buffer.length;
     },
   },
-};
+});
 
 module.exports = HoconHandler;
