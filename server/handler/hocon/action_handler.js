@@ -13,7 +13,9 @@ const HoconHandler = Object.assign({}, Default, {
 
       return buffer.length;
     },
+    doc: 'Length is a great hocon file command',
   },
+  doc: 'Hocon is a great file type',
 });
 
 module.exports = HoconHandler;

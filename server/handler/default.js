@@ -16,12 +16,12 @@ const DefaultHandler = {
   },
   GET: {
     handle: async (cmd) => {
-        console.log(cmd);
-  
-        const path = join(cmd.username, cmd.filename);
-        const stream = await getStream(path);
-  
-        return stream;
+      console.log(cmd);
+
+      const path = join(cmd.username, cmd.filename);
+      const stream = await getStream(path);
+
+      return stream;
     },
   },
   DELETE: {
@@ -32,6 +32,16 @@ const DefaultHandler = {
       return deleteFile(path);
     },
   },
+  DOC: {
+    handle: function(cmd, handler) {
+      console.log(cmd);
+      if (cmd.fromAction) {
+        return handler[cmd.fromAction].doc;
+      }
+      return handler.doc;
+    }
+  },
+  doc: 'Default doce',
 };
 
 module.exports = DefaultHandler;
