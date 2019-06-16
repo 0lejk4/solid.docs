@@ -1,7 +1,4 @@
-const { createContent, createStream, getContent, getStream, upsertContent, upsertStream, deleteFile } = require('../util/file_repository.js');
-
 class HandlerManager {
-
   constructor(handlers) {
     this.handlers = handlers;
   }
@@ -16,7 +13,7 @@ class HandlerManager {
   }
 }
 
-const HOCON = require('./hocon/action_handler');
+const HOCON = require('./hocon/handler');
 
 module.exports = new HandlerManager({
   HOCON,

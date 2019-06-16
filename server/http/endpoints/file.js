@@ -1,6 +1,4 @@
-const {
-  createContent, createStream, getContent, getStream, upsertContent, upsertStream, deleteFile,
-} = require('../../util/file_repository');
+const { createStream } = require('../../util/file_repository');
 const auth = require('../util/auth');
 const Busboy = require('busboy');
 
