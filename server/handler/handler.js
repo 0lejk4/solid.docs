@@ -14,7 +14,9 @@ class HandlerManager {
 }
 
 const HOCON = require('./hocon/handler');
+const PNG = require('./png/handler');
 
 module.exports = new HandlerManager({
   HOCON,
+  PNG,
 });
