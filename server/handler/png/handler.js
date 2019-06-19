@@ -13,6 +13,6 @@ const PngHandler = Object.assign(
   DocMixin
 );
 
-PngHandler.doc = "Handler for PNG files";
+PngHandler.doc = 'Handler for PNG files';
 
 module.exports = PngHandler;

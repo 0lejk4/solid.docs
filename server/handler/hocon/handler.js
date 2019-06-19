@@ -13,6 +13,6 @@ const HoconHandler = Object.assign(
   DocMixin
 );
 
-HoconHandler.doc = "Handler for HOCON files";
+HoconHandler.doc = 'Handler for HOCON files';
 
 module.exports = HoconHandler;
