@@ -15,7 +15,12 @@ const DocMixin = {
 
             return fullDoc;
         },
-        doc: 'Doc action',
+        doc: {
+            description: 'Doc action',
+            cmd: {
+                fromAction: 'String',
+            },
+        },
     },
 };
 

@@ -11,7 +11,13 @@ const HoconActions = {
 
       return buffer.length;
     },
-    doc: 'Get length of HOCON file',
+    doc: {
+      description: 'Get length of HOCON file',
+      cmd: {
+        username: 'String',
+        filename: 'String',
+      },
+    },
   },
 };
 
