@@ -91,8 +91,8 @@ trait UserServiceComponent { self: UserServiceEnvironment
     def onRegisterRequest(username: String): Future[HttpResponse] = {
       val request = HttpRequest(
         method = POST,
-        uri = s"http://storage/createsubdir?systemToken=$systemToken",
-        entity = HttpEntity(s"{ username : $username }")
+        uri = s"http://storage:3000/createsubdir?systemToken=$systemToken",
+        entity = HttpEntity(s"""{ "username" : "$username" }""")
       )
 
       httpClient.request(request)

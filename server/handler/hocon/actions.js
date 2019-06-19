@@ -11,6 +11,7 @@ const HoconActions = {
 
       return buffer.length;
     },
+    doc: "Get length of HOCON file",
   },
 };
 

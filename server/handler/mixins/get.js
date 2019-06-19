@@ -11,6 +11,7 @@ const GetMixin = {
 
       return stream;
     },
+    doc: "Get action",
   },
 };
 
