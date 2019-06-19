@@ -9,7 +9,7 @@ class HandlerManager {
     if (!typeHandler) throw new Error('No type handler');
     const cmdHandler = typeHandler[action];
     if (!cmdHandler) throw new Error('No cmd handler');
-    return cmdHandler.handle(cmd);
+    return cmdHandler.handle(cmd, typeHandler);
   }
 }
 
