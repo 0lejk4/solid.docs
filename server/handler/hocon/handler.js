@@ -5,12 +5,14 @@ const GetMixin = require('../mixins/get');
 const DocMixin = require('../mixins/doc');
 
 const HoconHandler = Object.assign(
-  {}, HoconActions,
+  {},
+  HoconActions,
   CreateMixin,
   DeleteMixin,
   GetMixin,
-  DocMixin,
-  { doc: "Handler for HOCON files" },
+  DocMixin
 );
+
+HoconHandler.doc = "Handler for HOCON files";
 
 module.exports = HoconHandler;
