@@ -13,7 +13,13 @@ const CreateMixin = {
       (await getStream(tmpPath)).pipe(stream);
       await deleteFile(tmpPath);
     },
-    doc: 'Create action',
+    doc: {
+      description: 'Create action',
+      cmd : {
+        username: 'String',
+        filename: 'String',
+      },
+    },
   },
 };
 

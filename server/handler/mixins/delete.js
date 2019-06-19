@@ -9,7 +9,13 @@ const DeleteMixin = {
       const path = join(cmd.username, cmd.filename);
       return deleteFile(path);
     },
-    doc: 'Delete action',
+    doc: {
+      description: 'Delete action',
+      cmd: {
+        username: 'String',
+        filename: 'String',
+      },
+    },
   },
 };
 

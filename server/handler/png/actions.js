@@ -13,7 +13,13 @@ const PngActions = {
 
       return { width: metadata.width, height: metadata.height };
     },
-    doc: 'Get PNG image size',
+    doc: {
+      description: 'Get PNG image size',
+      cmd: {
+        username: 'String',
+        filename: 'String',
+      },
+    },
   },
   RESIZE: {
     handle: async (cmd) => {
@@ -27,7 +33,17 @@ const PngActions = {
 
       return stream.pipe(resizer);
     },
-    doc: 'Resize PNG image',
+    doc: {
+      description: 'Resize PNG image',
+      cmd: {
+        username: 'String',
+        filename: 'String',
+        payload: {
+          width: 'Int',
+          height: 'Int',
+        }
+      },
+    },
   },
 };
 

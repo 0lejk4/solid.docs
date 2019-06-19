@@ -22,7 +22,7 @@ module.exports = (app) => {
         const stream = await createStream(fullpath);
 
         cmd.type = filename.split('.')[1].toUpperCase();
-        cmd.username = req.user || 'test';
+        cmd.username = req.user;
         cmd.action = 'CREATE';
         cmd.filename = filename;
         cmd.tmp = tmp;
@@ -48,7 +48,7 @@ module.exports = (app) => {
     try {
       const cmd = req.body;
 
-      cmd.username = req.user || 'test';
+      cmd.username = req.user;
 
       const result = await HandlerManager.handle(cmd);
       res.statusCode = 200;

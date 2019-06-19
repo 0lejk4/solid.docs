@@ -11,7 +11,13 @@ const GetMixin = {
 
       return stream;
     },
-    doc: 'Get action',
+    doc: {
+      description: 'Create action',
+      cmd: {
+        username: 'String',
+        filename: 'String',
+      },
+    },
   },
 };
 

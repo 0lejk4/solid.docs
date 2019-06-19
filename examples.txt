@@ -1,0 +1,104 @@
+//Register user
+
+curl  -X POST \
+   -H "Content-Type:application/json" \
+   -d \
+'{
+  "username":"test2",
+  "password": "test2",
+  "email": "test3"
+}' \
+ 'http://localhost:9000/auth/register'
+
+
+//Upload file
+
+ curl  -X POST \
+   -H "authentication:eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6InRlc3QyIn0.Km02N4-SjStudV_2ZYescYjpfbMT2FEU46yP3yRgZf0" \
+   -H "Content-Type:multipart/form-data" \
+   -F "file=" \
+ 'http://localhost:3000/files'
+
+//Get size of uploaded picture
+
+ curl  -X POST \
+   -H "authentication:eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6InRlc3QyIn0.Km02N4-SjStudV_2ZYescYjpfbMT2FEU46yP3yRgZf0" \
+   -H "Content-Type:application/json" \
+   -d \
+'{
+  "type":"PNG",
+  "action": "SIZE",
+  "filename": "ava.png"
+}' \
+ 'http://localhost:3000/file/action'
+
+//Get full documentation for PNG file actions
+
+ curl  -X POST \
+   -H "authentication:eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6InRlc3QyIn0.Km02N4-SjStudV_2ZYescYjpfbMT2FEU46yP3yRgZf0" \
+   -H "Content-Type:application/json" \
+   -d \
+'{
+  "type":"PNG",
+  "action": "DOC"
+}' \
+ 'http://localhost:3000/file/action'
+
+
+//Resize picture and return resized
+
+ curl -X POST \
+   -H "authentication:eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6InRlc3QyIn0.Km02N4-SjStudV_2ZYescYjpfbMT2FEU46yP3yRgZf0" \
+   -H "Content-Type:application/json" \
+   -d \
+'{
+    "type": "PNG",
+    "action": "RESIZE",
+    "filename": "ava.png",
+    "payload": {
+        "width": 100,
+        "height": 100
+    }
+}' \
+ 'http://localhost:3000/file/action' > new.png
+
+//Get picture
+
+ curl -X POST \
+   -H "authentication:eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6InRlc3QyIn0.Km02N4-SjStudV_2ZYescYjpfbMT2FEU46yP3yRgZf0" \
+   -H "Content-Type:application/json" \
+   -d \
+'{
+    "type": "PNG",
+    "action": "GET",
+    "filename": "ava.png"
+}' \
+ 'http://localhost:3000/file/action' > pic.png
+
+
+ //Delete picture
+ curl -X POST \
+   -H "authentication:eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6InRlc3QyIn0.Km02N4-SjStudV_2ZYescYjpfbMT2FEU46yP3yRgZf0" \
+   -H "Content-Type:application/json" \
+   -d \
+'{
+    "type": "PNG",
+    "action": "DELETE",
+    "filename": "ava.png"
+}' \
+ 'http://localhost:3000/file/action'
+
+
+
+// Get length of hocon file
+ curl -X POST \
+   -H "authentication:eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6InRlc3QyIn0.Km02N4-SjStudV_2ZYescYjpfbMT2FEU46yP3yRgZf0" \
+   -H "Content-Type:application/json" \
+   -d \
+'{
+    "type": "HOCON",
+    "action": "LENGTH",
+    "filename": "file.hocon"
+}' \
+ 'http://localhost:3000/file/action'
+ 
