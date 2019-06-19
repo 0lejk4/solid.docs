@@ -9,7 +9,7 @@ const DocMixin = {
 
             const fullDoc = {};
 
-            Object.keys(handler).map(f => fullDoc[f] = handler[f].doc);
+            Object.keys(handler).forEach(f => fullDoc[f] = handler[f].doc);
 
             fullDoc.doc = handler.doc;
 
