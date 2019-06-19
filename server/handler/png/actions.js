@@ -13,7 +13,7 @@ const PngActions = {
 
       return { width: metadata.width, height: metadata.height };
     },
-    doc: "Get PNG image size",
+    doc: 'Get PNG image size',
   },
   RESIZE: {
     handle: async (cmd) => {
@@ -27,7 +27,7 @@ const PngActions = {
 
       return stream.pipe(resizer);
     },
-    doc: "Resize PNG image",
+    doc: 'Resize PNG image',
   },
 };
 

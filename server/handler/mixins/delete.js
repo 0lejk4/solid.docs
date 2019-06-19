@@ -9,7 +9,7 @@ const DeleteMixin = {
       const path = join(cmd.username, cmd.filename);
       return deleteFile(path);
     },
-    doc: "Delete action",
+    doc: 'Delete action',
   },
 };
 

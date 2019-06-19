@@ -15,7 +15,7 @@ const DocMixin = {
 
             return fullDoc;
         },
-        doc: "Doc action",
+        doc: 'Doc action',
     },
 };
 
