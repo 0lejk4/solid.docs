@@ -28,7 +28,7 @@
     "jsonwebtoken": "^8.5.1",
     "pg-promise": "^8.6.3",
     "polka": "^0.5.2",
-    "sharp": "^0.22.1"
+    "sharp": "^0.30.5"
   },
   "devDependencies": {
     "chai": "^4.2.0",
